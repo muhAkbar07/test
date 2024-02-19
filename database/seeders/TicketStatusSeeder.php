@@ -17,8 +17,6 @@ class TicketStatusSeeder extends Seeder
             ['id' => TicketStatus::ASSIGNED, 'name' => 'Assigned'],
             ['id' => TicketStatus::IN_PROGRESS, 'name' => 'In Progress'],
             ['id' => TicketStatus::ON_HOLD, 'name' => 'On Hold'],
-            ['id' => TicketStatus::ESCALATED, 'name' => 'Escalated'],
-            ['id' => TicketStatus::PENDING_CUSTOMER_RESPONSE, 'name' => 'Pending Customer Response'],
             ['id' => TicketStatus::RESOLVED, 'name' => 'Resolved'],
             ['id' => TicketStatus::CLOSED, 'name' => 'Closed'],
         ]);
