@@ -19,9 +19,9 @@ class TicketsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->translateLabel()
-                    ->searchable(),
+                    Tables\Columns\TextColumn::make('title')
+                        ->translateLabel()
+                        ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->translateLabel()

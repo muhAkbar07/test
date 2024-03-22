@@ -33,7 +33,7 @@ class TicketStatusesChart extends ApexChartWidget
         return [
             'chart' => [
                 'type' => 'pie',
-                'height' => 300,
+                'height' => 400,
             ],
             'series' => $ticketStatuses->pluck('tickets_count')->toArray(),
             'labels' => $ticketStatuses->pluck('name')->toArray(),

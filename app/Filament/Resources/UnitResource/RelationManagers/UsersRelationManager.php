@@ -6,6 +6,7 @@ use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
+use Filament\Forms\Components\Field;
 use Filament\Tables;
 
 class UsersRelationManager extends RelationManager
@@ -13,6 +14,7 @@ class UsersRelationManager extends RelationManager
     protected static string $relationship = 'users';
 
     protected static ?string $recordTitleAttribute = 'name';
+    
 
     public static function form(Form $form): Form
     {
@@ -21,6 +23,7 @@ class UsersRelationManager extends RelationManager
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+                $field,
             ])
         ;
     }
@@ -42,7 +45,6 @@ class UsersRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\DetachBulkAction::make(),
-            ])
-        ;
+        ]);
     }
 }

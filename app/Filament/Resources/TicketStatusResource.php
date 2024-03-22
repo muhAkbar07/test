@@ -37,7 +37,7 @@ class TicketStatusResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('#'),
+                    ->label('No'),
 
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()

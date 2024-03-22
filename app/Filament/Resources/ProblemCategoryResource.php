@@ -14,7 +14,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProblemCategoryResource extends Resource
+class ProblemCategoryResource extends Resource  
 {
     protected static ?string $model = ProblemCategory::class;
 
@@ -35,7 +35,8 @@ class ProblemCategoryResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->translateLabel()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->rules('unique:problem_categories,name'),
             ]);
     }
 
@@ -87,7 +88,7 @@ class ProblemCategoryResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ])->where(function ($query) {
-                if (auth()->user()->hasRole('Admin Unit')) {
+                if (auth()->user()->hasRole('Staff Unit')) {
                     $query->where('problem_categories.unit_id', auth()->user()->unit_id);
                 }
             });

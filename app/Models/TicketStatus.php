@@ -25,13 +25,11 @@ class TicketStatus extends Model
     public const ASSIGNED = 2;
     public const IN_PROGRESS = 3;
     public const ON_HOLD = 4;
-    public const ESCALATED = 5;
-    public const PENDING_CUSTOMER_RESPONSE = 6;
-    public const RESOLVED = 7;
-    public const CLOSED = 8;
+    public const RESOLVED = 5;
+    public const CLOSED = 6;
+    public const Reject = 7;
     public $timestamps = false;
     protected $table = 'ticket_statuses';
-
     protected $fillable = [
         'name',
     ];
