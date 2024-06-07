@@ -22,7 +22,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Master Data';
+    protected static ?string $navigationGroup = 'Settings';
 
     public static function form(Form $form): Form
     {
@@ -51,8 +51,19 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
-            ])
-        ;
+
+                Forms\Components\select::make('roles')
+                ->multiple()
+                    ->relationship('roles', 'name')
+                    ->required()
+                    ->preload(),
+
+                Forms\Components\select::make('permissions')
+                    ->multiple()
+                    ->relationship('permissions', 'name')
+                    ->required()
+                    ->preload(),
+            ]);
     }
 
     public static function table(Table $table): Table

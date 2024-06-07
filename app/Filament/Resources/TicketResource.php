@@ -4,7 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
 use App\Filament\Resources\TicketResource\RelationManagers\CommentsRelationManager;
-use App\Models\Priority;use App\Models\Outlet;
+use App\Models\Priority;
+use App\Models\Outlet;
 use App\Models\ProblemCategory;
 use App\Models\Ticket;
 use App\Models\TicketStatus;
@@ -18,7 +19,16 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Filters\DateRangeFilter;
+use Filament\Tables\Filters\Filter;
+use Carbon\Carbon;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Tables\Components\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Filters\SelectFilter;
+
 
 class TicketResource extends Resource
 {
@@ -26,10 +36,14 @@ class TicketResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-ticket';
     protected static ?int $navigationSort = 3;
     protected static ?string $recordTitleAttribute = 'title';
+    // protected static function getNavigationBadge(): ?string
+    // {
+    //     return static::getModel()::where('status', true)->count();
+    // }
+
+    
     public static function form(Form $form): Form
-    {        
-        // ini dia ada disini 
-        // Cari status "Open" dari model TicketStatus
+    {     
         $openStatus = TicketStatus::where('name', 'Open')->first();
         $defaultValue = $openStatus ? $openStatus->id : null;
         $isCreating = empty(request()->route('record'));
@@ -91,15 +105,25 @@ class TicketResource extends Resource
                             'sm' => 2,
                         ])
                         ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
+                        
+                    Forms\Components\SpatieMediaLibraryFileUpload::make('attachments')
+                        ->label('Gambar1')
+                        ->columnSpan([
+                            'sm' => 2,
+                        ])
+                        ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
 
-                        Forms\Components\RichEditor::make('description')
+                    Forms\Components\RichEditor::make('description')
                         ->label(__('Description'))
                         ->required()
                         ->maxLength(65535)
                         ->columnSpan([
                             'sm' => 2,
                         ])
-                        ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
+                        ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin']))
+                        ->afterStateHydrated(function ($state) {
+                            $state = strip_tags($state, '<a><b><i><u><strong><em>');
+                        }),
 
                     Forms\Components\Placeholder::make('approved_at')
                         ->translateLabel()
@@ -140,8 +164,6 @@ class TicketResource extends Resource
                         ->options(function () use ($defaultValue) {
                             // Ambil semua status tiket dari model TicketStatus
                             $statuses = TicketStatus::all()->pluck('name', 'id')->toArray();
-
-                            // Jika nilai default adalah null, tambahkan status "Open" ke pilihan
                             if ($defaultValue === null) {
                                 $statuses = ['Open' => 'Open'] + $statuses;
                             }
@@ -197,10 +219,14 @@ class TicketResource extends Resource
                     ->translateLabel()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime()
                     ->translateLabel()
                     ->sortable()
                     ->toggleable(),
+                    
+                Tables\Columns\SpatieMediaLibraryImageColumn::make('attachments'),
+                
                 Tables\Columns\TextColumn::make('problemCategory.name')
                     ->searchable()
                     ->label(__('Problem Category'))
@@ -210,13 +236,32 @@ class TicketResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->label(__('Created From')),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->label(__('Created Until')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn ($query, $date) => $query->whereDate('created_at', '>=', Carbon::parse($date))
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn ($query, $date) => $query->whereDate('created_at', '<=', Carbon::parse($date))
+                            );
+                    })
+                    ->label(__('Created Date Range')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                // Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
+                ExportBulkAction::make(),
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
@@ -268,4 +313,4 @@ class TicketResource extends Resource
     {
         return __('Tickets');
     }
-}
+}   

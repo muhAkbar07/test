@@ -23,4 +23,9 @@ class CreateProblemCategory extends CreateRecord
         // Jika belum ada, lanjutkan proses penyimpanan
         parent::save();
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

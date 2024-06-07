@@ -34,11 +34,14 @@ class UserSeeder extends Seeder
             'unit_id' => 1,
         ]);
         $staffUnit->syncRoles('Staff Unit');
-
-        // 4. create a user
-        $staffUnit = User::factory()->create([
-            'name' => 'User',
-            'email' => 'user@example.com',
+        
+        // 4. create PIC  unit
+        $picUnit = User::factory()->create([
+            'name' => 'Pic Unit',
+            'email' => 'picunit@example.com',
+            'unit_id' => 1,
         ]);
+        $picUnit->syncRoles('Pic Unit');
+        
     }
 }

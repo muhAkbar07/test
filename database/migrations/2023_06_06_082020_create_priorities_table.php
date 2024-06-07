@@ -13,8 +13,12 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('priorities', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('name');
+            $table->integer('sla_hours');
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps();
         });
     }
 

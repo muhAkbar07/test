@@ -4,7 +4,7 @@ return [
     /**
      * Default route to see the diagram.
      */
-    'route' => '/uml',
+    'route' => '/',
 
     /**
      * You can turn on or off the indexing of specific types
@@ -83,13 +83,21 @@ return [
         'Providers/RouteServiceProvider.php',
         'Filament/Resources/ProblemCategoryResource.php',
         'Filament/Resources/TicketStatusResource.php',
+        'Filament/Resources/OutletResource.php',
+        
         'Filament/Resources/TicketResource.php',
         'Filament/Resources/UnitResource.php',
         'Filament/Resources/UserResource.php',
         'Filament/Resources/ProblemCategoryResource/RelationManagers/TicketsRelationManager.php',
+        'Filament/Resources/ProblemCategoryResource/RelationManagers/OutletsRelationManager.php',
         'Filament/Resources/TicketResource/RelationManagers/CommentsRelationManager.php',
+        'Filament/Resources/OutletResource/RelationManagers/CommentsRelationManager.php',
         'Filament/Resources/TicketStatusResource/RelationManagers/TicketsRelationManager.php',
         'Filament/Resources/UserResource/RelationManagers/TicketsRelationManager.php',
+        
+        'Filament/Resources/OutletStatusResource/RelationManagers/OutletsRelationManager.php',
+        'Filament/Resources/UserResource/RelationManagers/OutletsRelationManager.php',
+        
         'Policies/CommentPolicy.php',
         'Policies/PermissionPolicy.php',
         'Policies/PriorityPolicy.php',
@@ -97,6 +105,9 @@ return [
         'Policies/RolePolicy.php',
         'Policies/TicketPolicy.php',
         'Policies/TicketStatusPolicy.php',
+        
+        'Policies/OUtletPolicy.php',
+        'Policies/OUtletStatusPolicy.php',
         'Policies/UnitPolicy.php',
         'Policies/UserPolicy.php',
         'Models/Role.php',
@@ -111,10 +122,22 @@ return [
         'Filament/Resources/TicketResource/Pages/EditTicket.php',
         'Filament/Resources/TicketResource/Pages/ListTickets.php',
         'Filament/Resources/TicketResource/Pages/ViewTicket.php',
+        
+        'Filament/Resources/OutletResource/Pages/CreateOutlet.php',
+        'Filament/Resources/OutletResource/Pages/EditOutlet.php',
+        'Filament/Resources/OutletResource/Pages/ListOutlets.php',
+        'Filament/Resources/OutletResource/Pages/ViewOutlet.php',
+        
         'Filament/Resources/TicketStatusResource/Pages/CreateTicketStatus.php',
         'Filament/Resources/TicketStatusResource/Pages/EditTicketStatus.php',
         'Filament/Resources/TicketStatusResource/Pages/ListTicketStatuses.php',
         'Filament/Resources/TicketStatusResource/Pages/ViewTicketStatus.php',
+        
+        'Filament/Resources/OutletResource/Pages/CreateOutlet.php',
+        'Filament/Resources/OutletResource/Pages/EditOutlet.php',
+        'Filament/Resources/OutletResource/Pages/ListOutletes.php',
+        'Filament/Resources/OutletResource/Pages/ViewOutlet.php',
+        
         'Filament/Resources/UnitResource/Pages/CreateUnit.php',
         'Filament/Resources/UnitResource/Pages/EditUnit.php',
         'Filament/Resources/UnitResource/Pages/ListUnits.php',

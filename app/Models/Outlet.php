@@ -4,7 +4,7 @@
  * Created by Reliese Model.
  */
 
-namespace App\Models;
+ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -14,16 +14,18 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
+ * @property int $outlet_code
  * @property Collection|Ticket[] $tickets
  */
 class Outlet extends Model
 {
-    
     public $timestamps = false;
     protected $table = 'outlets';
 
     protected $fillable = [
         'name',
+        'outlet_code', 
+        'company_name',
     ];
 
     public function tickets()

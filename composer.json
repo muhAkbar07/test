@@ -11,17 +11,24 @@
         "php": "^8.1",
         "althinect/filament-spatie-roles-permissions": "^1.2",
         "awcodes/overlook": "^1.2",
+        "barryvdh/laravel-dompdf": "^2.2",
         "bezhansalleh/filament-language-switch": "^1.0",
+        "blade-ui-kit/blade-heroicons": "^1.4",
         "dutchcodingcompany/filament-socialite": "^0.2.5",
         "filament/filament": "^2.0",
+        "filament/spatie-laravel-media-library-plugin": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "jeffgreco13/filament-breezy": "^1.5",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "leandrocfe/filament-apex-charts": "^2.0",
+        "maatwebsite/excel": "^3.1",
+        "malzariey/filament-daterangepicker-filter": "*",
         "nyholm/psr7": "*",
         "owenvoke/blade-fontawesome": "^2.3",
+        "pxlrbt/filament-excel": "^1.1",
+        "savannabits/filament-flatpickr": "*",
         "stechstudio/filament-impersonate": "^2.18",
         "symfony/psr-http-message-bridge": "*"
     },
@@ -86,8 +93,8 @@
     "prefer-stable": true,
     "sniff": [
         "./vendor/bin/php-cs-fixer fix -vvv --dry-run --show-progress=dots"
-   ],
-   "lint": [
-       "./vendor/bin/php-cs-fixer fix -vvv --show-progress=dots"
-   ]
+    ],
+    "lint": [
+        "./vendor/bin/php-cs-fixer fix -vvv --show-progress=dots"
+    ]
 }

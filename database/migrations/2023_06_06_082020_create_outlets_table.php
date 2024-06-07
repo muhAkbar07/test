@@ -14,7 +14,10 @@ return new class extends Migration {
     {
         Schema::create('outlets', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('outlet_code');
+            $table->string('company_name')->nullable();
             $table->string('name');
+            $table->timestamps();
         });
     }
 

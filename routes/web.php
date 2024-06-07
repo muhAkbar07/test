@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\PDFController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 Route::get('/', function () {
     return view('landing');
 });
+Route::get('download', [PDFController::class, 'downloadpdf'])->name('download.tes');
 
 
 // socialite login

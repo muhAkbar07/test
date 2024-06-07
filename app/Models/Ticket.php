@@ -10,6 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+
 
 /**
  * Class Ticket.
@@ -35,9 +38,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property TicketStatus $ticket_status
  * @property Collection|Comment[] $comments
  */
-class Ticket extends Model
+class Ticket extends Model implements HasMedia
 {
-    use SoftDeletes;
+    use SoftDeletes, InteractsWithMedia;
     protected $table = 'tickets';
 
     protected $casts = [
@@ -72,6 +75,29 @@ class Ticket extends Model
     public function priority()
     {
         return $this->belongsTo(Priority::class);
+    }
+    /**
+     * Check if SLA is breached for this ticket.
+     *
+     * @return bool
+     */
+    public function isSLABreached(): bool
+    {
+        $slaHours = $this->priority->sla_hours;
+        $slaDeadline = $this->created_at->addHours($slaHours);
+        $currentTime = now();
+
+        return $currentTime > $slaDeadline && !$this->isHandled();
+    }
+
+    /**
+     * Check if the ticket is handled.
+     *
+     * @return bool
+     */
+    public function isHandled(): bool
+    {
+        return $this->responsible_id !== null;
     }
 
     /**

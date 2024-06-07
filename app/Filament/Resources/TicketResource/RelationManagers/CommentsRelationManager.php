@@ -36,10 +36,10 @@ class CommentsRelationManager extends RelationManager
                     Forms\Components\RichEditor::make('comment')
                         ->required()
                         ->maxLength(255),
-                    Forms\Components\FileUpload::make('attachments')
-                        ->directory('comment-attachments/' . date('m-y'))
-                        ->maxSize(2000)
-                        ->enableDownload(),
+                    // Forms\Components\FileUpload::make('attachments')
+                    //     ->directory('comment-attachments/' . date('m-y'))
+                    //     ->maxSize(2000)
+                    //     ->enableDownload(),
                 ])
             ]);
     }
