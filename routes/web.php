@@ -20,7 +20,6 @@ Route::get('/', function () {
 });
 Route::get('download', [PDFController::class, 'downloadpdf'])->name('download.tes');
 
-
 // socialite login
 Route::get('/auth/{provider}', [SocialiteController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'handleProvideCallback']);

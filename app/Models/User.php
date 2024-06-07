@@ -16,6 +16,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class User.
@@ -43,7 +46,7 @@ use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
  */
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
-    use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable;
+    use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable, logsActivity;
     protected $table = 'users';
 
     protected $casts = [
@@ -146,5 +149,25 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function socialiteUsers()
     {
         return $this->hasMany(SocialiteUser::class);
+    }
+    
+    protected static $logUniqueId = true;
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['*'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($user) {
+            if (!empty($user->password) && !Hash::needsRehash($user->password)) {
+                $user->password = Hash::make($user->password);
+            }
+        });
     }
 }

@@ -13,7 +13,6 @@ class Report extends Model
         'start_date',
         'end_date',
         'user_id',
-        // kolom lainnya
     ];
 
     public function user()

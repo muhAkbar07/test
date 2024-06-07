@@ -57,13 +57,19 @@ class UserResource extends Resource
                     ->relationship('roles', 'name')
                     ->required()
                     ->preload(),
-
-                Forms\Components\select::make('permissions')
-                    ->multiple()
-                    ->relationship('permissions', 'name')
-                    ->required()
-                    ->preload(),
             ]);
+            // Jika sedang dalam proses update, kita perlu menambahkan logika untuk mengenkripsi password.
+            if (request()->routeIs('filament.resource.update')) {
+                $form = $form->compose(function ($form, $user) {
+                    // Cek apakah password diisi dan tidak kosong.
+                    if ($form->password && $form->password !== '') {
+                        // Enkripsi password sebelum disimpan.
+                        $user->password = bcrypt($form->password);
+                    }
+                });
+            }
+
+        return $form;
     }
 
     public static function table(Table $table): Table
@@ -107,6 +113,7 @@ class UserResource extends Resource
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
             'view' => Pages\ViewUser::route('/{record}'),
+            'activities' => Pages\ListUserActivities::route('/{record}/activities'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
