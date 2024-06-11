@@ -164,4 +164,9 @@ class Ticket extends Model implements HasMedia
     {
         return $this->belongsTo(TicketStatus::class, 'ticket_statuses_id');
     }
+
+    public function report()
+    {
+        return $this->belongsTo(TicketReport::class, 'report_id');
+    }
 }

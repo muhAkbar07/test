@@ -13,7 +13,7 @@ class TicketStatusPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any TicketStatus');
+        return $user->hasAnyRole('Pic');
     }
 
     /**

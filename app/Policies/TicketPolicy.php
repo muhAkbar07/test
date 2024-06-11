@@ -14,7 +14,7 @@ class TicketPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasAnyRole('Pic', 'Staff Unit', 'Admin Unit'); 
     }
 
     /**
@@ -28,7 +28,7 @@ class TicketPolicy
         }
 
         // The staff unit can view tickets that have been assigned to them.
-        if ($user->hasRole('Staff Unit')) {
+        if ($user->hasRole('Staff Unit', 'Admin Unit')) {
             return $user->id == $ticket->owner_id ||  $ticket->responsible_id == $user->id;
         }
 

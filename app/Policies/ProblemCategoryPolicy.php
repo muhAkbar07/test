@@ -13,8 +13,13 @@ class ProblemCategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('Staff Unit');
+        return $user->hasAnyRole('Staff Unit', 'Pic');
     }
+
+    // public function viewAny(User $user): bool
+    // {
+    //     return $user->hasRole('Staff Unit') || $user->hasRole('Pic');
+    // }
 
     /**
      * Determine whether the user can view the model.

@@ -13,7 +13,7 @@ class PriorityPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Priority');
+        return $user->hasAnyRole('Pic');
     }
 
     /**

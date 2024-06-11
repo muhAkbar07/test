@@ -88,7 +88,7 @@ class ProblemCategoryResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ])->where(function ($query) {
-                if (auth()->user()->hasRole('Staff Unit')) {
+                if (auth()->user()->hasRole('Staff Unit', 'Admin Unit', 'Pic')) {
                     $query->where('problem_categories.unit_id', auth()->user()->unit_id);
                 }
             });

@@ -14,7 +14,8 @@ use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\OutletImport;
 use App\Exports\OutletExport;
-use Illuminate\Database\Eloquent\Builder;   
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OutletResource extends Resource
 {
@@ -65,15 +66,19 @@ class OutletResource extends Resource
                     ->label('Nama Outlet')
                     ->searchable(),
             ])
-            ->filters([])
+            ->filters([])   
+            ->headerActions([
+                Tables\Actions\Action::make('totalCount')
+                    ->label(fn () => 'Total: ' . Outlet::count())
+                    ->color('primary')
+                    ->icon('heroicon-o-information-circle')
+                    ->action(fn () => null),
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
-            // ->headerActions([
-            //     Tables\Actions\CreateAction::make(),
-            // ])
             ->bulkActions([
                 BulkAction::make('export')
                     ->label('Export')

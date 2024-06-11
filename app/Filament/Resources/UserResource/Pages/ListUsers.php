@@ -10,16 +10,16 @@ class ListUsers extends ListRecords
 {
     protected static string $resource = UserResource::class;
 
-    protected function getActions(): array
-    {
-        return [
-            Actions\ButtonAction::make('custom_button')
-                ->label('Laporan')
-                ->url(fn() => route('download.tes'))
-                ->openUrlInNewTab(),
-            Actions\CreateAction::make(),
-        ];
-    }
+    // protected function getActions(): array
+    // {
+    //     return [
+    //         Actions\ButtonAction::make('custom_button')
+    //             ->label('Laporan')
+    //             ->url(fn() => route('download.tes'))
+    //             ->openUrlInNewTab(),
+    //         Actions\CreateAction::make(),
+    //     ];
+    // }
 
     public function customButtonAction()
     {

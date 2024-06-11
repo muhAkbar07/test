@@ -13,7 +13,7 @@ class UnitPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view-any Unit');
+        return $user->hasAnyRole('Pic');
     }
 
     /**
