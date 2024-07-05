@@ -19,10 +19,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Outlet extends Model
 {
-    public $timestamps = false;
+    public $timestamps = true;
     protected $table = 'outlets';
+    const CREATED_AT = 'created_at';
 
+    
     protected $fillable = [
+        'id',
         'name',
         'outlet_code', 
         'company_name',

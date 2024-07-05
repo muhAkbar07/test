@@ -15,6 +15,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+use Filament\Tables\Columns\BadgeColumn;
 
 class UserResource extends Resource
 {
@@ -29,8 +30,7 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('unit_id')
-                    ->options(Unit::all()
-                        ->pluck('name', 'id'))
+                    ->options(Unit::all()->pluck('name', 'id'))
                     ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->required()
@@ -42,7 +42,6 @@ class UserResource extends Resource
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('identity')
                     ->maxLength(255),
@@ -51,25 +50,12 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
-
-                Forms\Components\select::make('roles')
-                ->multiple()
+                Forms\Components\Select::make('roles')
+                    ->multiple()
                     ->relationship('roles', 'name')
                     ->required()
                     ->preload(),
             ]);
-            // Jika sedang dalam proses update, kita perlu menambahkan logika untuk mengenkripsi password.
-            if (request()->routeIs('filament.resource.update')) {
-                $form = $form->compose(function ($form, $user) {
-                    // Cek apakah password diisi dan tidak kosong.
-                    if ($form->password && $form->password !== '') {
-                        // Enkripsi password sebelum disimpan.
-                        $user->password = bcrypt($form->password);
-                    }
-                });
-            }
-
-        return $form;
     }
 
     public static function table(Table $table): Table
@@ -78,7 +64,17 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TagsColumn::make('roles.name'),
+                BadgeColumn::make('roles.name')
+                    ->color(function (?string $state): string {
+                        $state = $state ?? 'default';
+                        return match ($state) {
+                            'Super Admin' => 'warning',
+                            'Staff Unit' => 'danger',
+                            'Pic' => 'primary',
+                            'Admin Unit' => 'success',
+                            default => 'secondary',
+                        };
+                    }),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
             ])
@@ -86,8 +82,7 @@ class UserResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Impersonate::make()
-                    ->redirectTo(route('filament.pages.dashboard')),
+                Impersonate::make()->redirectTo(route('filament.pages.dashboard')),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
@@ -95,8 +90,7 @@ class UserResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
-            ])
-        ;
+            ]);
     }
 
     public static function getRelations(): array
@@ -120,10 +114,6 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ])
-        ;
+        return parent::getEloquentQuery()->withoutGlobalScopes([SoftDeletingScope::class]);
     }
 }

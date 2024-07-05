@@ -1,9 +1,12 @@
 <?php
 
+
+// database/seeders/PrioritySeeder.php
+
 namespace Database\Seeders;
 
-use App\Models\Priority;
 use Illuminate\Database\Seeder;
+use App\Models\Priority;
 
 class PrioritySeeder extends Seeder
 {
@@ -12,9 +15,8 @@ class PrioritySeeder extends Seeder
      */
     public function run(): void
     {
-        Priority::create(['id' => Priority::CRITICAL, 'name' => 'Critical/Urgent', 'sla_hours' => 2]);
-        Priority::create(['id' => Priority::HIGH, 'name' => 'High', 'sla_hours' => 4]);
-        Priority::create(['id' => Priority::MEDIUM, 'name' => 'Medium', 'sla_hours' => 8]);
-        Priority::create(['id' => Priority::LOW, 'name' => 'Low', 'sla_hours' => 24]);
+        Priority::create(['id' => 1, 'name' => 'High', 'sla_hours' => 8]); // Contoh nilai untuk sla_hours
+        Priority::create(['id' => 2, 'name' => 'Medium', 'sla_hours' => 24]); // Contoh nilai untuk sla_hours
+        Priority::create(['id' => 3, 'name' => 'Low', 'sla_hours' => 48]); // Contoh nilai untuk sla_hours
     }
 }

@@ -10,18 +10,12 @@ class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
-    protected function getActions(): array
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
-        ];
-    }
+        if (!empty($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
 
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
+        return $data;
     }
 }

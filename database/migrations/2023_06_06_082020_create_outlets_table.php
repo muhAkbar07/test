@@ -13,8 +13,8 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('outlets', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('outlet_code');
+            $table->id();
+            $table->string('outlet_code')->unique();
             $table->string('company_name')->nullable();
             $table->string('name');
             $table->timestamps();

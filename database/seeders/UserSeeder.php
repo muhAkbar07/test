@@ -1,9 +1,11 @@
 <?php
 
+
 namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -12,6 +14,12 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Ensure roles exist
+        $roles = ['Super Admin', 'Admin Unit', 'Staff Unit'];
+        foreach ($roles as $role) {
+            Role::firstOrCreate(['name' => $role]);
+        }
+
         // 1. create a super admin
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
@@ -19,7 +27,7 @@ class UserSeeder extends Seeder
         ]);
         $superAdmin->syncRoles('Super Admin');
 
-        // 2. create a admin unit
+        // 2. create an admin unit
         $adminUnit = User::factory()->create([
             'name' => 'Admin Unit',
             'email' => 'adminunit@example.com',
@@ -34,14 +42,5 @@ class UserSeeder extends Seeder
             'unit_id' => 1,
         ]);
         $staffUnit->syncRoles('Staff Unit');
-        
-        // 4. create PIC  unit
-        $picUnit = User::factory()->create([
-            'name' => 'Pic Unit',
-            'email' => 'picunit@example.com',
-            'unit_id' => 1,
-        ]);
-        $picUnit->syncRoles('Pic Unit');
-        
     }
 }

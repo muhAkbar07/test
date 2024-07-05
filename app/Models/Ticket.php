@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -13,31 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-
-/**
- * Class Ticket.
- *
- * @property int $id
- * @property int $priority_id
- * @property int $unit_id
- * @property int $owner_id
- * @property int $problem_category_id
- * @property string $title
- * @property string $description
- * @property int $ticket_statuses_id
- * @property null|int $responsible_id
- * @property null|Carbon $created_at
- * @property null|Carbon $updated_at
- * @property null|Carbon $approved_at
- * @property null|Carbon $solved_at
- * @property null|string $deleted_at
- * @property Priority $priority
- * @property Unit $unit
- * @property null|User $user
- * @property ProblemCategory $problem_category
- * @property TicketStatus $ticket_status
- * @property Collection|Comment[] $comments
- */
 class Ticket extends Model implements HasMedia
 {
     use SoftDeletes, InteractsWithMedia;
@@ -60,12 +31,47 @@ class Ticket extends Model implements HasMedia
         'owner_id',
         'problem_category_id',
         'title',
+        'asset_number',
+        'serial_number',
+        'outlet_id',
         'description',
         'ticket_statuses_id',
         'responsible_id',
         'approved_at',
         'solved_at',
     ];
+    
+    public $timestamps = true;
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'approved_at',
+        'solved_at',
+        'deleted_at',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+    
+        static::saving(function ($model) {
+            $closeStatus = TicketStatus::where('name', 'Close')->first();
+            $pendingStatus = TicketStatus::where('name', 'Pending')->first();
+            $progressStatus = TicketStatus::where('name', 'Progress')->first();
+    
+            if ($model->isDirty('ticket_statuses_id')) {
+                if ($closeStatus && $model->ticket_statuses_id == $closeStatus->id) {
+                    $model->solved_at = Carbon::now();
+                }
+    
+                if (($pendingStatus && $model->ticket_statuses_id == $pendingStatus->id) ||
+                    ($progressStatus && $model->ticket_statuses_id == $progressStatus->id)) {
+                    $model->approved_at = Carbon::now();
+                }
+            }
+        });
+    }
+    
 
     /**
      * Get the priority that owns the Ticket.
@@ -76,6 +82,12 @@ class Ticket extends Model implements HasMedia
     {
         return $this->belongsTo(Priority::class);
     }
+
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class);
+    }
+
     /**
      * Check if SLA is breached for this ticket.
      *

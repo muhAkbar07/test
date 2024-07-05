@@ -8,10 +8,9 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
 use App\Models\Outlet;
-
-class OutletRelationManager extends RelationManager
+class OutletsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'outlets';
+    protected static string $relationship = 'outlet';
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -40,7 +39,7 @@ class OutletRelationManager extends RelationManager
             ->headerActions([])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->url(fn (Outlet $record): string => route('filament.resources.outlets.view', $record)),
+                    ->url(fn (Outlet $record): string => route('filament.resources.outlet.view', $record)),
             ])
             ->bulkActions([]);
     }

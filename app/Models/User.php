@@ -1,15 +1,10 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -20,33 +15,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Hash;
 
-/**
- * Class User.
- *
- * @property int $id
- * @property null|int $unit_id
- * @property string $name
- * @property string $email
- * @property null|Carbon $email_verified_at
- * @property null|string $password
- * @property null|string $two_factor_secret
- * @property null|string $two_factor_recovery_codes
- * @property null|Carbon $two_factor_confirmed_at
- * @property null|string $remember_token
- * @property null|Carbon $created_at
- * @property null|Carbon $updated_at
- * @property null|string $identity
- * @property null|string $phone
- * @property null|int $user_level_id
- * @property bool $is_active
- * @property null|string $deleted_at
- * @property null|Unit $unit
- * @property Collection|Comment[] $comments
- * @property Collection|Ticket[] $tickets
- */
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable, logsActivity;
+    use SoftDeletes, HasRoles, HasSuperAdmin, HasFactory, Notifiable, LogsActivity;
+
     protected $table = 'users';
 
     protected $casts = [
@@ -81,8 +53,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     /**
      * Get the unit that owns the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function unit()
     {
@@ -91,8 +61,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     /**
      * Get all of the comments for the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function comments()
     {
@@ -100,9 +68,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     }
 
     /**
-     * Get all of the tickets for the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get all of the tickets owned by the User.
      */
     public function tickets()
     {
@@ -110,48 +76,42 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     }
 
     /**
-     * Get all of the ticekt responsibility for the User.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get all of the tickets where the User is responsible.
      */
-    public function ticektResponsibility()
+    public function ticketsResponsibility()
     {
         return $this->hasMany(Ticket::class, 'responsible_id');
     }
 
     /**
-     * Determine who has access.
-     *
-     * Only active users can access the filament
+     * Determine if the user can access Filament.
      */
     public function canAccessFilament(): bool
     {
-        return auth()->user()->is_active;
+        return $this->is_active;
     }
 
     /**
-     * Add scope to display users based on their role.
-     *
-     * If the role is as an admin unit, then display the user based on their unit ID.
+     * Scope a query to only include users based on their role.
      */
     public function scopeByRole($query)
     {
         if (auth()->user()->hasRole('Admin Unit')) {
-            return $query->where('users.unit_id', auth()->user()->unit_id);
+            return $query->where('unit_id', auth()->user()->unit_id);
         }
     }
 
     /**
-     * Get all of the socialiteUsers for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Get all of the socialite users for the User.
      */
     public function socialiteUsers()
     {
         return $this->hasMany(SocialiteUser::class);
     }
-    
-    protected static $logUniqueId = true;
+
+    /**
+     * Configure the Activity log options for the model.
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -160,6 +120,9 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             ->dontSubmitEmptyLogs();
     }
 
+    /**
+     * Perform operations before saving the user instance.
+     */
     protected static function boot()
     {
         parent::boot();

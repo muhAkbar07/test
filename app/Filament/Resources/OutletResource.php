@@ -14,8 +14,7 @@ use Filament\Tables\Actions\BulkAction;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\OutletImport;
 use App\Exports\OutletExport;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class OutletResource extends Resource
 {
@@ -84,7 +83,7 @@ class OutletResource extends Resource
                     ->label('Export')
                     ->action(function ($records) {
                         $recordIds = $records->pluck('id')->toArray();
-                        return Excel::download(new OutletExport($recordIds), 'outlets.xlsx');
+                        return Excel::download(new OutletExport($recordIds), 'outlet.xlsx');
                     }),
                 BulkAction::make('import')
                     ->label('Import')
@@ -108,7 +107,7 @@ class OutletResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOutlets::route('/'),
+            'index' => Pages\ListOutlet::route('/'),
             'create' => Pages\CreateOutlet::route('/create'),
             'edit' => Pages\EditOutlet::route('/{record}/edit'),
             'view' => Pages\ViewOutlet::route('/{record}'),

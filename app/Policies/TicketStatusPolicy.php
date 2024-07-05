@@ -35,10 +35,22 @@ class TicketStatusPolicy
     /**
      * Determine whether the user can update the model.
      */
+    // public function update(User $user, TicketStatus $ticketstatus): bool
+    // {
+    //     return $user->can('update TicketStatus');
+    // }
+
     public function update(User $user, TicketStatus $ticketstatus): bool
     {
+        if ($ticketstatus->id == TicketStatus::CLOSE) {
+            // Hanya Admin Unit yang boleh mengubah status 'CLOSE'
+            return $user->hasRole('Admin Unit');
+        }
+
+        // Izinkan pengguna lain untuk mengubah status selain 'CLOSE'
         return $user->can('update TicketStatus');
     }
+
 
     /**
      * Determine whether the user can delete the model.

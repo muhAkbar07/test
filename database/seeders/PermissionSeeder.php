@@ -1,34 +1,18 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Database\Seeders;
 
-use Illuminate\Console\Command;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 
-class SyncPermissions extends Command
+class PermissionSeeder extends Seeder
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
+     * Run the database seeds.
      */
-    protected $signature = 'permissions:sync';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Sync permissions using Althinect/filament-spatie-roles-permissions';
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+    public function run(): void
     {
-        // Menjalankan Althinect/filament-spatie-roles-permissions untuk menghasilkan permissions
+        // running Althinect/filament-spatie-roles-permissions for  generate permissions
         Artisan::call('permissions:sync');
     }
 }

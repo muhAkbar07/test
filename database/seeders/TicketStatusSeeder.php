@@ -14,10 +14,7 @@ class TicketStatusSeeder extends Seeder
     {
         TicketStatus::insert([
             ['id' => TicketStatus::OPEN, 'name' => 'Open'],
-            ['id' => TicketStatus::ASSIGNED, 'name' => 'Assigned'],
             ['id' => TicketStatus::IN_PROGRESS, 'name' => 'In Progress'],
-            ['id' => TicketStatus::ON_HOLD, 'name' => 'On Hold'],
-            ['id' => TicketStatus::RESOLVED, 'name' => 'Resolved'],
             ['id' => TicketStatus::CLOSED, 'name' => 'Closed'],
         ]);
     }

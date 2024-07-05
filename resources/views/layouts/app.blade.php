@@ -1,5 +1,5 @@
 <!-- resources/views/layouts/app.blade.php -->
-<!DOCTYPE html>
+<!DOCTYPE html class="dark">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <title>Aplikasi Laporan</title>
     @livewireStyles
 </head>
-<body>
+<body class="bg-white dark:bg-gray-900">
     <div class="container">
         @yield('content')
     </div>

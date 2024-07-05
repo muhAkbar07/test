@@ -49,8 +49,26 @@ class TicketPolicy
      */
     public function update(User $user, Ticket $ticket): bool
     {
-        return $this->view($user, $ticket);
+        // Admin Unit dapat mengubah status menjadi 'Close'
+        if ($user->hasRole('Admin Unit')) {
+            return $ticket->ticket_statuses_id != TicketStatus::CLOSE && ($user->id == $ticket->owner_id || $ticket->unit_id == $user->unit_id);
+        }
+
+        // Staff Unit tidak boleh mengubah status menjadi 'Close'
+        if ($user->hasRole('Staff Unit')) {
+            if ($ticket->ticket_statuses_id == TicketStatus::CLOSE) {
+                return false;
+            }
+
+            // Tetap izinkan untuk mengedit tiket
+            return $user->id == $ticket->owner_id || $ticket->responsible_id == $user->id;
+        }
+
+        // Default to owner's permission
+        return $user->id == $ticket->owner_id;
     }
+
+
 
     /**
      * Determine whether the user can delete the model.

@@ -28,6 +28,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Tables\Components\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Columns\BadgeColumn;
 
 class TicketResource extends Resource
 {
@@ -56,7 +57,7 @@ class TicketResource extends Resource
         return $form->schema([
             Card::make()->schema([
                 Forms\Components\Select::make('unit_id')
-                    ->label(__('Work Unit'))
+                    ->label(__('Devartement / Div'))
                     ->options(Unit::all()->pluck('name', 'id'))
                     ->searchable()
                     ->required()
@@ -73,6 +74,7 @@ class TicketResource extends Resource
                     })
                     ->reactive()
                     ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
+                    
                 Forms\Components\Select::make('problem_category_id')
                     ->label(__('Problem Category'))
                     ->options(function (callable $get, callable $set) {
@@ -85,14 +87,25 @@ class TicketResource extends Resource
                     ->searchable()
                     ->required()
                     ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
+                    
+                Forms\Components\TextInput::make('asset_number')
+                    ->label(__('Asset Number'))
+                    ->maxLength(255)
+                    ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
+                Forms\Components\TextInput::make('serial_number')
+                    ->label(__('Serial Number'))
+                    ->maxLength(255)
+                    ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
+                    
                 Forms\Components\TextInput::make('title')
                     ->label(__('Title'))
                     ->required()
                     ->maxLength(255)
                     ->columnSpan(['sm' => 2])
+                    // ->hint('Jika memilih prioritas tinggi, tiket harus diperbarui dalam waktu 2 jam.')
                     ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
                 Forms\Components\SpatieMediaLibraryFileUpload::make('attachments')
-                    ->label('Gambar1')
+                    ->label('Gambar')
                     ->columnSpan(['sm' => 2])
                     ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
                 Forms\Components\RichEditor::make('description')
@@ -119,71 +132,120 @@ class TicketResource extends Resource
                     ->options(Priority::all()->pluck('name', 'id'))
                     ->searchable()
                     ->required()
+                    ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                        if ($state == Priority::HIGH) {
+                            // Tambahkan pesan peringatan
+                            session()->flash('message', 'Tiket dengan prioritas tinggi harus diperbarui dalam waktu 2 jam.');
+                        }
+                    })
                     ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
-                Forms\Components\Select::make('outlet_id')
-                    ->label(__('Unit Kerja'))
-                    ->options(Outlet::all()->pluck('name', 'id'))
+                    
+                    Forms\Components\Select::make('outlet_id')
+                    ->label(__('Outlet'))
+                    ->options(function () {
+                        return Outlet::all()->mapWithKeys(function ($outlet) {
+                            return [$outlet->id => $outlet->company_name . ' - ' . $outlet->name];
+                        })->toArray();
+                    })
                     ->searchable()
                     ->required()
                     ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin', 'Staff unit'])),
+
+
                 Forms\Components\Select::make('ticket_statuses_id')
                     ->label(__('Status'))
                     ->options(function () use ($defaultValue) {
-                        $statuses = TicketStatus::all()->pluck('name', 'id')->toArray();
+                        $user = auth()->user();
+                
+                        if ($user->hasRole('Admin Unit')) {
+                            $statuses = TicketStatus::whereIn('id', [
+                                TicketStatus::OPEN,
+                                TicketStatus::CLOSE,
+                            ])->pluck('name', 'id')->toArray();
+                        } elseif ($user->hasRole('Staff Unit')) {
+                            $statuses = TicketStatus::whereNotIn('id', [
+                                TicketStatus::CLOSE,
+                            ])->pluck('name', 'id')->toArray();
+                        } else {
+                            $statuses = TicketStatus::pluck('name', 'id')->toArray();
+                        }
+                
                         if ($defaultValue === null) {
                             $statuses = ['Open' => 'Open'] + $statuses;
                         }
+                
                         return $statuses;
                     })
                     ->searchable()
                     ->required()
-                    ->default($defaultValue)
-                    ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin', 'Staff Unit'])),
+                    ->default($defaultValue),
+                
+
+
                     Forms\Components\Select::make('responsible_id')
                     ->label(__('Responsible'))
                     ->options(function (callable $get, callable $set) {
                         $user = auth()->user();
                         if ($user->hasAnyRole(['Super Admin', 'Admin Unit', 'Staff Unit'])) {
-                            return User::all()->pluck('name', 'id');
+                            return User::with('unit')->get()->pluck('name', 'id');
                         } else {
-                            return User::ByRole()->pluck('name', 'id');
+                            return User::ByRole()->with('unit')->get()->pluck('name', 'id');
                         }
                     })
                     ->searchable()
                     ->required()
                     ->hiddenOn('create')
-                    ->hidden(fn() => !auth()->user()->hasAnyRole(['Super Admin', 'Admin Unit', 'user']))
-                    ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
+                    ->hidden(fn() => !auth()->user()->hasAnyRole(['Super Admin', 'Admin Unit', 'Staff Unit']))
+                    ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin', 'Staff Unit']))
+                    ->afterStateHydrated(function ($state, callable $set) {
+                        $unitName = User::find($state)->unit->name ?? null;
+                        $set('unit_name', $unitName);
+                    }),
+
+                    
+                
+
+                    
                 Forms\Components\Placeholder::make('created_at')
                     ->translateLabel()
                     ->content(fn(?Ticket $record): string => $record ? $record->created_at->diffForHumans() : '-'),
                 Forms\Components\Placeholder::make('updated_at')
                     ->translateLabel()
                     ->content(fn(?Ticket $record): string => $record ? $record->updated_at->diffForHumans() : '-'),
+                
             ])->columnSpan(1),
         ])->columns(3);
     }
-    
+ 
     public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('title')
-                ->translateLabel()
-                ->searchable(),
+            Tables\Columns\TextColumn::make('problemCategory.name')
+                ->searchable()
+                ->label(__('Problem'))
+                ->toggleable(),
             Tables\Columns\TextColumn::make('created_at')
                 ->label(__('Created At'))
                 ->dateTime()
                 ->translateLabel()
                 ->sortable()
                 ->toggleable(),
+            Tables\Columns\TextColumn::make('outlet.name')->label('Outlet'),
+            Tables\Columns\TextColumn::make('responsible.name'),
             Tables\Columns\SpatieMediaLibraryImageColumn::make('attachments'),
-            Tables\Columns\TextColumn::make('problemCategory.name')
-                ->searchable()
-                ->label(__('Problem Category'))
-                ->toggleable(),
-            Tables\Columns\TextColumn::make('ticketStatus.name')
+            
+            BadgeColumn::make('ticketStatus.name')
                 ->label(__('Status'))
-                ->sortable(),
+                ->sortable()
+                ->color(function (string $state): string {
+                    return match ($state) {
+                        'Open' => 'primary',
+                        'Pending' => 'warning',
+                        'Close' => 'danger',
+                        'Progres' => 'success',
+                        default => 'secondary',
+                    };
+                }),
         ])->filters([
             Filter::make('created_at')
                 ->form([
@@ -209,6 +271,8 @@ class TicketResource extends Resource
         ])->defaultSort('created_at', 'desc');
     }
 
+
+
     public static function getRelations(): array
     {
         return [
@@ -232,7 +296,6 @@ class TicketResource extends Resource
             if (auth()->user()->hasRole('Super Admin')) {
                 return;
             }
-
             if (auth()->user()->hasRole('Admin Unit')) {
                 $query->where('tickets.unit_id', auth()->user()->unit_id)->orWhere('tickets.owner_id', auth()->id());
             } elseif (auth()->user()->hasRole('Staff Unit')) {

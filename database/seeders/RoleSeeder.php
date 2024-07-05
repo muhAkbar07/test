@@ -1,9 +1,12 @@
 <?php
 
+// database/seeders/RoleSeeder.php
+
 namespace Database\Seeders;
 
-use App\Models\Role;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Carbon\Carbon;
 
 class RoleSeeder extends Seeder
 {
@@ -12,24 +15,18 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create([
-            'name' => 'Super Admin',
-            'guard_name' => 'web',
-        ]);
+        $roles = [
+            ['name' => 'Super Admin', 'guard_name' => 'web'],
+            ['name' => 'Admin', 'guard_name' => 'web'],
+            ['name' => 'User', 'guard_name' => 'web'],
+            // Tambahkan peran lainnya di sini
+        ];
 
-        Role::create([
-            'name' => 'Admin Unit',
-            'guard_name' => 'web',
-        ]);
-
-        Role::create([
-            'name' => 'Staff Unit',
-            'guard_name' => 'web',
-        ]);
-        
-        Role::firstOrCreate([
-            'name' => 'Pic',
-            'guard_name' => 'web',
-        ]);
+        foreach ($roles as $role) {
+            Role::updateOrCreate(
+                ['name' => $role['name'], 'guard_name' => $role['guard_name']],
+                ['updated_at' => Carbon::now(), 'created_at' => Carbon::now()]
+            );
+        }
     }
 }

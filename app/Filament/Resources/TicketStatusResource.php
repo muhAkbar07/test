@@ -12,6 +12,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\BadgeColumn;
 
 class TicketStatusResource extends Resource
 {
@@ -42,6 +43,19 @@ class TicketStatusResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
                     ->searchable(),
+
+                BadgeColumn::make('name')
+                    ->label(__('Nama Status'))
+                    ->sortable()
+                    ->color(function (string $state): string {
+                        return match ($state) {
+                            'Open' => 'primary',
+                            'Pending' => 'warning',
+                            'Close' => 'danger',
+                            'In Progress' => 'success',
+                            default => 'secondary',
+                        };
+                    }),
 
                 Tables\Columns\TextColumn::make('tickets_count')
                     ->counts('tickets')

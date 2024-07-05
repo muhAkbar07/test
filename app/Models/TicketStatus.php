@@ -22,12 +22,9 @@ class TicketStatus extends Model
     use SoftDeletes;
 
     public const OPEN = 1;
-    public const ASSIGNED = 2;
+    public const PENDING = 2;
     public const IN_PROGRESS = 3;
-    public const ON_HOLD = 4;
-    public const RESOLVED = 5;
-    public const CLOSED = 6;
-    public const Reject = 7;
+    public const CLOSE = 4;
     public $timestamps = false;
     protected $table = 'ticket_statuses';
     protected $fillable = [

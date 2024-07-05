@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Outlet;
+use App\Models\Outlet; // Pastikan namespace sesuai dengan struktur direktori Anda
 use Illuminate\Database\Seeder;
 
 class OutletSeeder extends Seeder
@@ -14,10 +14,6 @@ class OutletSeeder extends Seeder
      */
     public function run()
     {
-        Outlet::create([
-            'name' => 'GJB-001-Merdeka',
-            'company_name' => 'Nama PT Anda', // Isi sesuai nama PT
-            'outlet_code' => 'KodeOutlet', // Isi sesuai kode outlet yang unik
-        ]);
+        
     }
 }

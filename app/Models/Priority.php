@@ -27,8 +27,14 @@ class Priority extends Model
         'created_at',
     ];
 
+    const HIGH = 1;
+    const MEDIUM = 2;
+    const LOW = 3;
+
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
     }
+
+    
 }
