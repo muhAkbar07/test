@@ -74,9 +74,12 @@ class OutletResource extends Resource
                     ->action(fn () => null),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    
+                ]),
             ])
             ->bulkActions([
                 BulkAction::make('export')

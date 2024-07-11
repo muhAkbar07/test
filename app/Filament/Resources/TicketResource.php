@@ -30,6 +30,7 @@ use Filament\Tables\Components\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Columns\BadgeColumn;
 
+
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
@@ -125,7 +126,8 @@ class TicketResource extends Resource
                     ->translateLabel()
                     ->hiddenOn('create')
                     ->content(fn(?Ticket $record): string => $record->solved_at ? $record->solved_at->diffForHumans() : '-'),
-            ])->columns(['sm' => 2])->columnSpan(2),
+                    ])->columns(['sm' => 2])->columnSpan(2),
+                    
             Card::make()->schema([
                 Forms\Components\Select::make('priority_id')
                     ->label(__('Priority'))
@@ -179,31 +181,19 @@ class TicketResource extends Resource
                     ->searchable()
                     ->required()
                     ->default($defaultValue),
-                
 
-
-                    Forms\Components\Select::make('responsible_id')
+                Forms\Components\Select::make('responsible_id')
                     ->label(__('Responsible'))
                     ->options(function (callable $get, callable $set) {
-                        $user = auth()->user();
-                        if ($user->hasAnyRole(['Super Admin', 'Admin Unit', 'Staff Unit'])) {
-                            return User::with('unit')->get()->pluck('name', 'id');
-                        } else {
-                            return User::ByRole()->with('unit')->get()->pluck('name', 'id');
+                        $unit = Unit::find($get('unit_id'));
+                        if ($unit) {
+                            return $unit->users->pluck('name', 'id');
                         }
+                        return User::all()->pluck('name', 'id'); 
                     })
                     ->searchable()
                     ->required()
-                    ->hiddenOn('create')
-                    ->hidden(fn() => !auth()->user()->hasAnyRole(['Super Admin', 'Admin Unit', 'Staff Unit']))
-                    ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin', 'Staff Unit']))
-                    ->afterStateHydrated(function ($state, callable $set) {
-                        $unitName = User::find($state)->unit->name ?? null;
-                        $set('unit_name', $unitName);
-                    }),
-
-                    
-                
+                    ->disabled(!empty(request()->route('record')) && !auth()->user()->hasAnyRole(['Super Admin'])),
 
                     
                 Forms\Components\Placeholder::make('created_at')
@@ -261,8 +251,10 @@ class TicketResource extends Resource
                     );
                 })->label(__('Created Date Range')),
         ])->actions([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
+            Tables\Actions\ActionGroup::make([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+            ]),
         ])->bulkActions([
             ExportBulkAction::make(),
             Tables\Actions\DeleteBulkAction::make(),
@@ -270,7 +262,6 @@ class TicketResource extends Resource
             Tables\Actions\RestoreBulkAction::make(),
         ])->defaultSort('created_at', 'desc');
     }
-
 
 
     public static function getRelations(): array

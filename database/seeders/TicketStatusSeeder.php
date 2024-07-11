@@ -12,10 +12,10 @@ class TicketStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        TicketStatus::insert([
+        TicketStatus::upsert([
             ['id' => TicketStatus::OPEN, 'name' => 'Open'],
             ['id' => TicketStatus::IN_PROGRESS, 'name' => 'In Progress'],
             ['id' => TicketStatus::CLOSED, 'name' => 'Closed'],
-        ]);
+        ], ['id'], ['name']);
     }
 }

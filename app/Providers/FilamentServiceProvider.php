@@ -30,7 +30,7 @@ class FilamentServiceProvider extends ServiceProvider
 
         Filament::serving(function () {
             // Using Vite
-            Filament::registerViteTheme('resources/css/filament.css');
+            Filament::registerViteTheme('resources/css/filament.css');  
             
             Filament::registerUserMenuItems([
                 UserMenuItem::make()

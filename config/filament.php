@@ -259,8 +259,8 @@ return [
     */
     
     // 'favicon' => 'https://5b54-180-254-69-237.ngrok-free.app/favicon.png',
-    // 'favicon' => asset('favicon.png'),
     'favicon' => asset('favicon.png'),
+
 
     /*
     |--------------------------------------------------------------------------

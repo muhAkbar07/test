@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
@@ -21,10 +17,10 @@ class TicketStatus extends Model
 {
     use SoftDeletes;
 
-    public const OPEN = 1;
-    public const PENDING = 2;
-    public const IN_PROGRESS = 3;
-    public const CLOSE = 4;
+    const OPEN = 1;
+    const IN_PROGRESS = 2;
+    const CLOSED = 3;
+    
     public $timestamps = false;
     protected $table = 'ticket_statuses';
     protected $fillable = [
