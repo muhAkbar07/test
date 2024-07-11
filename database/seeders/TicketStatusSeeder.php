@@ -14,7 +14,8 @@ class TicketStatusSeeder extends Seeder
     {
         TicketStatus::upsert([
             ['id' => TicketStatus::OPEN, 'name' => 'Open'],
-            ['id' => TicketStatus::IN_PROGRESS, 'name' => 'In Progress'],
+            ['id' => TicketStatus::PENDING, 'name' => 'Pending'],
+            ['id' => TicketStatus::PROGRES, 'name' => 'Progres'],
             ['id' => TicketStatus::CLOSED, 'name' => 'Closed'],
         ], ['id'], ['name']);
     }
