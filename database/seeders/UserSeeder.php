@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserSeeder extends Seeder
 {
@@ -28,11 +29,12 @@ class UserSeeder extends Seeder
             ['email' => 'superadmin@example.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password123'), // Set the password
+                'password' => Hash::make('admin12345'), // Set the password
                 'email_verified_at' => $currentTimestamp, // Set email_verified_at
             ]
         );
         $superAdmin->syncRoles('Super Admin');
+        Log::info('Super Admin password hash: ' . $superAdmin->password);
 
         // 2. create an admin unit
         $adminUnit = User::updateOrCreate(
@@ -40,11 +42,12 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin Unit',
                 'unit_id' => 1,
-                'password' => Hash::make('password123'), // Set the password
+                'password' => Hash::make('admin1234'), // Set the password
                 'email_verified_at' => $currentTimestamp, // Set email_verified_at
             ]
         );
         $adminUnit->syncRoles('Admin Unit');
+        Log::info('Admin Unit password hash: ' . $adminUnit->password);
 
         // 3. create a staff unit
         $staffUnit = User::updateOrCreate(
@@ -52,10 +55,11 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Staff Unit',
                 'unit_id' => 1,
-                'password' => Hash::make('password123'), 
+                'password' => Hash::make('admin1234'), 
                 'email_verified_at' => $currentTimestamp, 
             ]
         );
         $staffUnit->syncRoles('Staff Unit');
+        Log::info('Staff Unit password hash: ' . $staffUnit->password);
     }
 }
