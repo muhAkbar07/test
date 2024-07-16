@@ -13,6 +13,6 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         // running Althinect/filament-spatie-roles-permissions for  generate permissions
-        // Artisan::call('permissions:sync');
+        Artisan::call('permissions:sync');
     }
 }
