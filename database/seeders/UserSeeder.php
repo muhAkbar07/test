@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
             ['email' => 'superadmin@example.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('admin12345'), // Set the password
+                'password' => Hash::make('admin1234'), // Set the password
                 'email_verified_at' => $currentTimestamp, // Set email_verified_at
             ]
         );
