@@ -16,7 +16,7 @@ class TicketStatusSeeder extends Seeder
             ['id' => TicketStatus::OPEN, 'name' => 'Open'],
             ['id' => TicketStatus::PENDING, 'name' => 'Pending'],
             ['id' => TicketStatus::PROGRES, 'name' => 'Progres'],
-            ['id' => TicketStatus::CLOSED, 'name' => 'Closed'],
+            ['id' => TicketStatus::CLOSE, 'name' => 'Close'],
         ], ['id'], ['name']);
     }
 }

@@ -20,7 +20,7 @@ class TicketStatus extends Model
     const OPEN = 1;
     const PENDING = 2;
     const PROGRES = 3;
-    const CLOSED = 4;
+    const CLOSE = 4;
     
     public $timestamps = false;
     protected $table = 'ticket_statuses';

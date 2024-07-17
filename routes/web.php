@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,11 @@ use App\Http\Controllers\PDFController;
 Route::get('/', function () {
     return view('landing');
 });
+
+// search Landing Page
+Route::get('/search', [SearchController::class, 'search']);
+
+// pdf download
 Route::get('download', [PDFController::class, 'downloadpdf'])->name('download.tes');
 
 // socialite login
