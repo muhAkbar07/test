@@ -1,5 +1,4 @@
 <style>
-    /* CSS untuk mengatur posisi tengah modal */
     .modal-container {
         display: flex;
         justify-content: center;
@@ -42,42 +41,49 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const query = form.no_ticket.value;
+    document.getElementById('search-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const query = form.no_ticket.value.trim();
 
-            fetch(`/search?no_ticket=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    let results = '';
-                    if (data.length > 0) {
-                        data.forEach(result => {
-                            results += `
-                                <div class="bg-white rounded-lg shadow-lg p-4 mb-4 w-full max-w-sm">
-                                    <p><strong>No Ticket:</strong> ${result.no_ticket}</p>
-                                    <p><strong>Title:</strong> ${result.title}</p>
-                                    <p><strong>Status:</strong> ${result.ticket_statuses_id}</p>
-                                    <p><strong>Description:</strong> ${result.description}</p>
-                                </div>
-                                <hr>
-                            `;
-                        });
-                    } else {
-                        results = '<p>Data tidak ditemukan</p>';
-                    }
-                    document.getElementById('search-results').innerHTML = results;
-                    document.getElementById('modal-container').classList.add('show');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('search-results').innerHTML = '<p>Terjadi kesalahan saat melakukan pencarian</p>';
-                    document.getElementById('modal-container').classList.add('show');
-                });
-        });
+        // Pengecekan apakah nomor tiket dimulai dengan 'RG' dan panjangnya sesuai
+        if (!/^RG\d{10}$/.test(query)) {
+            alert('Silakan masukkan nomor tiket lengkap yang valid, contoh: RG2408082011');
+            return;
+        }
 
-        document.getElementById('close-modal').addEventListener('click', function() {
-            document.getElementById('modal-container').classList.remove('show');
-        });
+        fetch(`/search?no_ticket=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                let results = '';
+                if (data.length > 0) {
+                    data.forEach(result => {
+                        results += `
+                            <div class="bg-white rounded-lg shadow-lg p-4 mb-4 w-full max-w-sm">
+                                <p><strong>No Ticket:</strong> ${result.no_ticket}</p>
+                                <p><strong>Title:</strong> ${result.title}</p>
+                                <p><strong>Status:</strong> ${result.ticket_statuses_id}</p>
+                                <p><strong>Description:</strong> ${result.description}</p>
+                            </div>
+                            <hr>
+                        `;
+                    });
+                } else {
+                    results = '<p>Data tidak ditemukan</p>';
+                }
+                document.getElementById('search-results').innerHTML = results;
+                document.getElementById('modal-container').classList.add('show');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('search-results').innerHTML = '<p>Terjadi kesalahan saat melakukan pencarian</p>';
+                document.getElementById('modal-container').classList.add('show');
+            });
     });
+
+    document.getElementById('close-modal').addEventListener('click', function() {
+        document.getElementById('modal-container').classList.remove('show');
+    });
+});
+
 </script>

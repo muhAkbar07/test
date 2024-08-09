@@ -79,13 +79,19 @@ class Ticket extends Model implements HasMedia
         });
     }
 
+    // public static function generateTicketNumber()
+    // {
+    //     $date = now()->format('Ymd');
+    //     $latestTicket = self::whereDate('created_at', now()->toDateString())->latest('id')->first();
+    //     $number = $latestTicket ? (int)substr($latestTicket->no_ticket, -6) + 1 : 1;
+
+    //     return 'RG' . $date . str_pad($number, 6, '0', STR_PAD_LEFT);
+    // }
+
     public static function generateTicketNumber()
     {
-        $date = now()->format('Ymd');
-        $latestTicket = self::whereDate('created_at', now()->toDateString())->latest('id')->first();
-        $number = $latestTicket ? (int)substr($latestTicket->no_ticket, -6) + 1 : 1;
-
-        return 'RG' . $date . str_pad($number, 6, '0', STR_PAD_LEFT);
+        $date = now()->format('ymdHi'); // 'ymdHi' -> year, month, day, hour, minute
+        return 'RG' . $date;
     }
 
     public function priority()

@@ -35,7 +35,7 @@
                 @include('components.global-search')
             </div>
             <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-                <img src="{{ url('ticket1.png') }}">
+                <img src="{{ url('background-home.png') }}">
             </div>
         </div>
     </section>
